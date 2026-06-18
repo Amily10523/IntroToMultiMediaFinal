@@ -11,17 +11,7 @@
      videos/04-wipes-box-cover.png      → 濕紙巾盒（白色長盒+鍵盤那張）
      videos/05-mounting-putty-cover.png → 固定黏土（輝柏隨意貼那張）
 
-  ▍影片（之後把 mp4 放進同一個 videos/ 資料夾，檔名如下）
-     videos/01-side-table.mp4
-     videos/02-monitor-arm.mp4
-     videos/03-pegboard.mp4
-     videos/04-wipes-box.mp4
-     videos/05-mounting-putty.mp4
-
-  ▍首頁 hero 是純色背景，不需要任何圖片。
-
-  ＊封面預設為黑白，滑鼠移到卡片上才變彩色。
-  ＊副檔名是 .png；若改用其他格式，把上面對應的檔名改一下即可。
+  ▍影片（此版本已全部改用安全雲端 iframe 串流，免除本機大檔案上傳與 CORS 阻擋！）
   ============================================================
 -->
 <html lang="zh-Hant">
@@ -117,16 +107,20 @@
   #films{border-top:1px solid var(--line);}
   .reel{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:34px 26px;}
   @media(min-width:1024px){.reel{grid-template-columns:repeat(5,1fr);}}
-  .film-video{position:relative;aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:#000;border:1px solid var(--line);box-shadow:0 12px 34px var(--shadow);transition:transform .35s ease,box-shadow .35s ease;}
+  .film-video{position:relative;aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:#000;border:1px solid var(--line);box-shadow:0 12px 34px var(--shadow);transition:transform .35s ease,box-shadow .35s ease;cursor:pointer;}
   .film:hover .film-video{transform:translateY(-6px);box-shadow:0 22px 46px var(--shadow);}
-  .film-video video{width:100%;height:100%;object-fit:cover;display:block;}
-  /* 封面圖：預設黑白，hover 變彩色；墊在 video 之上，影片載入後才隱藏 */
+  
+  /* 影片載入預留容器 */
+  .film-video .video-placeholder{width:100%;height:100%;display:block;border:none;background:#000;}
+
+  /* 封面圖：預設黑白，hover 變彩色 */
   .cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;filter:grayscale(1) contrast(.95) brightness(1.02);transition:filter .5s ease,transform .5s ease;}
   .film:hover .cover{filter:grayscale(0);transform:scale(1.04);}
   .play-hover{position:absolute;inset:0;background:rgba(20,18,12,.3);opacity:0;display:flex;align-items:center;justify-content:center;transition:opacity .3s ease;z-index:4;pointer-events:none;}
   .film:hover .play-hover{opacity:1;}
   .play-hover .circle{width:58px;height:58px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;}
   .play-hover .tri{width:0;height:0;border-left:16px solid #fff;border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:4px;}
+  
   .film-body{padding:16px 2px 0;}
   .film-body h3{font-family:"Noto Serif TC",serif;font-weight:600;font-size:18px;color:var(--ink);margin-bottom:6px;}
   .film-body p{font-size:13.5px;color:var(--ink-soft);line-height:1.7;margin-bottom:13px;}
@@ -134,6 +128,35 @@
   .shop-link:hover{border-color:var(--accent);color:var(--ink);}
   .shop-link .arr{font-size:13px;transition:transform .25s ease;}
   .shop-link:hover .arr{transform:translateX(2px);}
+
+  /* 🎬 彈出式影片視窗 (Modal) Styles */
+  .video-modal{
+    position:fixed;inset:0;background:rgba(10,9,7,.86);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    display:flex;align-items:center;justify-content:center;
+    z-index:1000;opacity:0;pointer-events:none;
+    transition:opacity .4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .video-modal.active{opacity:1;pointer-events:auto;}
+  .modal-content{
+    position:relative;width:92%;max-width:420px;
+    aspect-ratio:9/16;background:#000;border-radius:24px;
+    overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.8);
+    border:1px solid rgba(255,255,255,.1);
+    transform:scale(.92);transition:transform .4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .video-modal.active .modal-content{transform:scale(1);}
+  .modal-close{
+    position:absolute;top:20px;right:20px;
+    background:rgba(255,255,255,.15);border:none;color:#fff;
+    font-size:24px;width:44px;height:44px;border-radius:50%;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    z-index:1010;transition:all .2s ease;
+    backdrop-filter:blur(4px);
+  }
+  .modal-close:hover{background:rgba(255,255,255,.3);transform:rotate(90deg);}
+  .modal-iframe-container{width:100%;height:100%;background:#000;}
+  .modal-iframe-container iframe{width:100%;height:100%;border:none;display:block;}
 
   /* 引言 */
   .quote{border-top:1px solid var(--line);text-align:center;}
@@ -217,11 +240,11 @@
 
   <div class="scale">
     <div class="lab">影片裡偶爾出現的注音小評級，是這樣分的：</div>
-    <div class="lvl"><b><b>ㄅ</b> 好用而且推薦</b></div>
-    <div class="lvl"><b><b>ㄆ</b> 好用，但有點小缺點</b></div>
-    <div class="lvl"><b><b>ㄇ</b> 普通，可有可無</b></div>
-    <div class="lvl"><b><b>ㄈ</b> 有點後悔</b></div>
-    <div class="lvl"><b><b>ㄦ</b> 想淘汰</b></div>
+    <div class="lvl"><b>ㄅ</b> 好用而且推薦</div>
+    <div class="lvl"><b>ㄆ</b> 好用，但有點小缺點</div>
+    <div class="lvl"><b>ㄇ</b> 普通，可有可無</div>
+    <div class="lvl"><b>ㄈ</b> 有點後悔</div>
+    <div class="lvl"><b>ㄦ</b> 想淘汰</div>
   </div>
 </section>
 
@@ -238,14 +261,13 @@
 
   <div class="reel">
 
+    <!-- 01 IKEA 升降邊桌 -->
     <article class="film">
-      <div class="film-video">
+      <!-- 點擊此處動態觸發 Modal 播放 -->
+      <div class="film-video" data-id="1OxK8Z1YeQ5VKAgAYFl0ov28QuMYN0hkj" data-title="IKEA 升降邊桌">
         <div class="play-hover"><div class="circle"><div class="tri"></div></div></div>
-        <video controls controlsList="nodownload" preload="none" playsinline>
-          <source src="videos/01-side-table.mp4" type="video/mp4">
-        </video>
-        <img class="cover" alt="IKEA 升降邊桌"
-          src="videos/01-side-table-cover.png">
+        <div class="video-placeholder"></div>
+        <img class="cover" alt="IKEA 升降邊桌" src="videos/01-side-table-cover.png">
       </div>
       <div class="film-body">
         <h3>IKEA 升降邊桌</h3>
@@ -254,14 +276,12 @@
       </div>
     </article>
 
+    <!-- 02 COFO 螢幕懸臂 -->
     <article class="film">
-      <div class="film-video">
+      <div class="film-video" data-id="1p_VlxnzCzovJSVdxXvIXAaX1m22PkwNR" data-title="COFO 螢幕懸臂">
         <div class="play-hover"><div class="circle"><div class="tri"></div></div></div>
-        <video controls controlsList="nodownload" preload="none" playsinline>
-          <source src="videos/02-monitor-arm.mp4" type="video/mp4">
-        </video>
-        <img class="cover" alt="COFO 螢幕懸臂"
-          src="videos/02-monitor-arm-cover.png">
+        <div class="video-placeholder"></div>
+        <img class="cover" alt="COFO 螢幕懸臂" src="videos/02-monitor-arm-cover.png">
       </div>
       <div class="film-body">
         <h3>COFO 螢幕懸臂</h3>
@@ -270,14 +290,12 @@
       </div>
     </article>
 
+    <!-- 03 洞洞板 -->
     <article class="film">
-      <div class="film-video">
+      <div class="film-video" data-id="1IoX_mXdlK2NpesG1lSnikeCDWtZxzGNG" data-title="洞洞板">
         <div class="play-hover"><div class="circle"><div class="tri"></div></div></div>
-        <video controls controlsList="nodownload" preload="none" playsinline>
-          <source src="videos/03-pegboard.mp4" type="video/mp4">
-        </video>
-        <img class="cover" alt="洞洞板"
-          src="videos/03-pegboard-cover.png">
+        <div class="video-placeholder"></div>
+        <img class="cover" alt="洞洞板" src="videos/03-pegboard-cover.png">
       </div>
       <div class="film-body">
         <h3>洞洞板</h3>
@@ -286,14 +304,12 @@
       </div>
     </article>
 
+    <!-- 04 濕紙巾盒 -->
     <article class="film">
-      <div class="film-video">
+      <div class="film-video" data-id="1i0L1BNBxQTkOs2AXZN8Zlb8wwpyzY9SU" data-title="濕紙巾盒">
         <div class="play-hover"><div class="circle"><div class="tri"></div></div></div>
-        <video controls controlsList="nodownload" preload="none" playsinline>
-          <source src="videos/04-wipes-box.mp4" type="video/mp4">
-        </video>
-        <img class="cover" alt="濕紙巾盒"
-          src="videos/04-wipes-box-cover.png">
+        <div class="video-placeholder"></div>
+        <img class="cover" alt="濕紙巾盒" src="videos/04-wipes-box-cover.png">
       </div>
       <div class="film-body">
         <h3>濕紙巾盒</h3>
@@ -302,14 +318,12 @@
       </div>
     </article>
 
+    <!-- 05 固定黏土 -->
     <article class="film">
-      <div class="film-video">
+      <div class="film-video" data-id="1hiLsBrKnt8LX65kKlftZPMWFXVGFGK2B" data-title="固定黏土">
         <div class="play-hover"><div class="circle"><div class="tri"></div></div></div>
-        <video controls controlsList="nodownload" preload="none" playsinline>
-          <source src="videos/05-mounting-putty.mp4" type="video/mp4">
-        </video>
-        <img class="cover" alt="固定黏土"
-          src="videos/05-mounting-putty-cover.png">
+        <div class="video-placeholder"></div>
+        <img class="cover" alt="固定黏土" src="videos/05-mounting-putty-cover.png">
       </div>
       <div class="film-body">
         <h3>固定黏土</h3>
@@ -320,6 +334,16 @@
 
   </div>
 </section>
+
+<!-- 🎬 彈出式影片視窗 (Modal) -->
+<div class="video-modal" id="videoModal">
+  <button class="modal-close" id="closeModal" aria-label="關閉影片">&times;</button>
+  <div class="modal-content">
+    <div class="modal-iframe-container" id="modalContainer">
+      <!-- iframe 將在點擊卡片時由 JS 動態注入，確保關閉時影片立即停止 -->
+    </div>
+  </div>
+</div>
 
 <!-- 引言 -->
 <section class="sec frame quote" id="about">
@@ -340,32 +364,67 @@
 </footer>
 
 <script>
+  // 主題切換邏輯
   const root=document.body,btn=document.getElementById('toggle'),
         ic=document.getElementById('ticon'),lb=document.getElementById('tlabel');
   function setTheme(t){root.setAttribute('data-theme',t);lb.textContent=t==='light'?'深色':'淺色';ic.textContent=t==='light'?'◑':'◐';}
   btn.addEventListener('click',()=>setTheme(root.getAttribute('data-theme')==='light'?'dark':'light'));
 
-  // 封面永遠蓋在影片上；點封面才播放並隱藏封面（避免 preload 觸發 loadeddata 把封面提早藏掉）
-  document.querySelectorAll('.film-video').forEach(box=>{
-    const v=box.querySelector('video');
-    const c=box.querySelector('.cover');
-    const ph=box.querySelector('.play-hover');
-    if(!v||!c) return;
-    function reveal(){
-      c.style.display='none';
-      if(ph) ph.style.display='none';
-      v.play().catch(()=>{});
-    }
-    c.style.cursor='pointer';
-    c.addEventListener('click',reveal);
-    if(ph){ph.style.pointerEvents='none';}
+  // 🎬 彈出式視窗 (Modal) 控制邏輯
+  const modal = document.getElementById('videoModal');
+  const modalContainer = document.getElementById('modalContainer');
+  const closeModalBtn = document.getElementById('closeModal');
 
-    // 防下載保護：防止在影片元件與卡片上使用滑鼠右鍵選單另存影片
+  // 開啟彈出視窗
+  function openVideoModal(fileId) {
+    // 建立 Google Drive 預覽 iframe (在 9:16 的 Modal 內，控制條、進度條能完美顯示並正常調整)
+    modalContainer.innerHTML = `
+      <iframe 
+        src="https://drive.google.com/file/d/${fileId}/preview?autoplay=1" 
+        allow="autoplay; encrypted-media" 
+        allowfullscreen>
+      </iframe>
+    `;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // 防止背景網頁滾動
+  }
+
+  // 關閉彈出視窗
+  function closeVideoModal() {
+    modal.classList.remove('active');
+    modalContainer.innerHTML = ''; // 清空 iframe，立即停止影片播放與聲音
+    document.body.style.overflow = ''; // 恢復背景網頁滾動
+  }
+
+  // 點擊卡片觸發
+  document.querySelectorAll('.film-video').forEach(box => {
+    box.addEventListener('click', () => {
+      const fileId = box.getAttribute('data-id');
+      if (fileId) openVideoModal(fileId);
+    });
+
+    // 防下載保護：阻止右鍵選單
     box.addEventListener('contextmenu', e => {
       e.preventDefault();
     });
   });
 
+  // 關閉事件綁定
+  closeModalBtn.addEventListener('click', closeVideoModal);
+  
+  // 點擊 Modal 黑色半透明背景也能關閉
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeVideoModal();
+  });
+
+  // 按下鍵盤 ESC 鍵也能關閉
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeVideoModal();
+    }
+  });
+
+  // 導覽列 Active 狀態滾動偵測
   const secs=[...document.querySelectorAll('section[id]')];
   const links=[...document.querySelectorAll('.nav-links a')];
   window.addEventListener('scroll',()=>{
