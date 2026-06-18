@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  圖片要放哪裡：全部放在 index.html 同層的 videos/ 資料夾
+  ============================================================
+
+  ▍封面圖（已截好的 5 張，請命名成下列檔名，副檔名用 .jpg）
+     videos/01-side-table-cover.png     → IKEA 升降邊桌（白色升降桌桌面那張）
+     videos/02-monitor-arm-cover.png    → COFO 螢幕懸臂（螢幕被懸臂撐著那張）
+     videos/03-pegboard-cover.png       → 洞洞板（整片白色洞洞板那張）
+     videos/04-wipes-box-cover.png      → 濕紙巾盒（白色長盒+鍵盤那張）
+     videos/05-mounting-putty-cover.png → 固定黏土（輝柏隨意貼那張）
+
+  ▍影片（之後把 mp4 放進同一個 videos/ 資料夾，檔名如下）
+     videos/01-side-table.mp4
+     videos/02-monitor-arm.mp4
+     videos/03-pegboard.mp4
+     videos/04-wipes-box.mp4
+     videos/05-mounting-putty.mp4
+
+  ▍首頁 hero 是純色背景，不需要任何圖片。
+
+  ＊封面預設為黑白，滑鼠移到卡片上才變彩色。
+  ＊副檔名是 .png；若改用其他格式，把上面對應的檔名改一下即可。
+  ============================================================
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>盤點一下我的工作區</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f1e9; --bg-soft:#ece7db; --card:#fbfaf6;
+    --ink:#3a352c; --ink-soft:#807868; --line:#ddd6c5;
+    --accent:#9a8c6e; --accent-deep:#7a6e54;
+    --shadow:rgba(120,110,84,.14); --nav-bg:rgba(244,241,233,.82);
+    --hero-tint:rgba(244,241,233,.30);
+  }
+  [data-theme="dark"]{
+    --bg:#16150f; --bg-soft:#1e1d15; --card:#201f17;
+    --ink:#efe9da; --ink-soft:#a59c87; --line:#322f24;
+    --accent:#c2b48f; --accent-deep:#d4c8a4;
+    --shadow:rgba(0,0,0,.5); --nav-bg:rgba(22,21,15,.8);
+    --hero-tint:rgba(22,21,15,.46);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:"Noto Sans TC",sans-serif;font-weight:300;line-height:1.8;
+    -webkit-font-smoothing:antialiased;
+    transition:background .5s ease,color .5s ease;overflow-x:hidden;
+  }
+  .frame{max-width:1320px;margin:0 auto;padding:0 clamp(20px,5vw,72px);}
+
+  /* 導覽列 */
+  .nav{position:fixed;top:0;left:0;width:100%;z-index:50;background:var(--nav-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);transition:background .5s ease,border-color .5s ease;}
+  .nav-inner{max-width:1320px;margin:0 auto;padding:16px clamp(20px,5vw,72px);display:flex;justify-content:space-between;align-items:center;}
+  .brand{font-family:"Noto Serif TC",serif;font-weight:600;font-size:19px;color:var(--ink);letter-spacing:.01em;}
+  .nav-links{display:flex;align-items:center;gap:30px;}
+  .nav-links a{font-size:14px;color:var(--ink-soft);text-decoration:none;transition:color .25s ease;position:relative;}
+  .nav-links a:hover,.nav-links a.active{color:var(--ink);}
+  .nav-links a.active::after{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:-7px;width:4px;height:4px;border-radius:50%;background:var(--accent);}
+  .nav-toggle{background:none;border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:6px 13px;cursor:pointer;font-family:"Space Grotesk",sans-serif;font-size:12.5px;letter-spacing:.04em;display:flex;align-items:center;gap:6px;transition:border-color .25s ease;}
+  .nav-toggle:hover{border-color:var(--accent);}
+  .menu-btn{display:none;background:none;border:none;color:var(--ink);font-size:26px;cursor:pointer;line-height:1;}
+
+  /* HERO（簡約單欄） */
+  .hero{margin-top:62px;min-height:80vh;display:flex;align-items:center;position:relative;background:var(--bg-soft);overflow:hidden;}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(130% 100% at 85% 5%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 60%);pointer-events:none;}
+  .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(to bottom, transparent, var(--bg));pointer-events:none;z-index:1;}
+  .hero-inner{position:relative;z-index:3;width:100%;max-width:1320px;margin:0 auto;padding:9vh clamp(20px,5vw,72px);}
+  .hero-inner > *{max-width:620px;}
+  .eyebrow{font-family:"Space Grotesk",sans-serif;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent-deep);margin-bottom:22px;}
+  .hero h1{font-family:"Noto Serif TC",serif;font-weight:900;font-size:clamp(40px,6.5vw,78px);line-height:1.08;margin-bottom:26px;color:var(--ink);}
+  .hero h1 em{font-style:normal;color:var(--accent-deep);}
+  .hero p{font-size:17px;color:var(--ink);max-width:500px;margin-bottom:30px;opacity:.92;}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;}
+  .btn{padding:12px 26px;border-radius:999px;font-size:14px;cursor:pointer;text-decoration:none;transition:all .25s ease;border:1px solid transparent;font-weight:400;}
+  .btn-primary{background:var(--ink);color:var(--bg);}
+  .btn-primary:hover{opacity:.88;}
+  .btn-ghost{border-color:var(--ink);color:var(--ink);}
+  .btn-ghost:hover{background:var(--ink);color:var(--bg);}
+  @media(max-width:920px){
+    .hero{min-height:auto;}
+    .hero-inner{padding:9vh clamp(20px,6vw,40px);}
+  }
+
+  /* 區塊 */
+  .sec{padding:9vh 0;}
+  .sec-label{font-family:"Space Grotesk",sans-serif;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:46px;}
+  .sec-head h2{font-family:"Noto Serif TC",serif;font-weight:700;font-size:clamp(26px,3.6vw,38px);color:var(--ink);}
+  .sec-head p{font-size:14px;color:var(--ink-soft);margin-top:8px;}
+  .sec-head .rule{flex:1;height:1px;background:var(--line);margin-bottom:10px;}
+
+  /* 靈感歷程 */
+  #inspo{border-top:1px solid var(--line);}
+  .story-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px 54px;}
+  .beat{position:relative;padding-left:28px;}
+  .beat::before{content:"";position:absolute;left:0;top:11px;width:9px;height:9px;border-radius:50%;background:var(--accent);}
+  .beat::after{content:"";position:absolute;left:4px;top:24px;bottom:-30px;width:1px;background:var(--line);}
+  .beat:nth-child(3)::after,.beat:last-child::after{display:none;}
+  .beat h3{font-family:"Noto Serif TC",serif;font-weight:600;font-size:19px;color:var(--ink);margin-bottom:7px;}
+  .beat p{font-size:14.5px;color:var(--ink-soft);}
+  .beat .bopo{font-family:"Noto Serif TC",serif;color:var(--accent-deep);font-weight:700;}
+  .scale{margin-top:42px;background:var(--bg-soft);border:1px solid var(--line);border-radius:14px;padding:24px 28px;display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;}
+  .scale .lab{font-size:13.5px;color:var(--ink-soft);width:100%;margin-bottom:4px;}
+  .scale .lvl{display:flex;align-items:baseline;gap:7px;font-size:13.5px;color:var(--ink-soft);}
+  .scale .lvl b{font-family:"Noto Serif TC",serif;font-size:18px;font-weight:700;color:var(--accent-deep);}
+
+  /* 影片卡片 */
+  #films{border-top:1px solid var(--line);}
+  .reel{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:34px 26px;}
+  @media(min-width:1024px){.reel{grid-template-columns:repeat(5,1fr);}}
+  .film-video{position:relative;aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:#000;border:1px solid var(--line);box-shadow:0 12px 34px var(--shadow);transition:transform .35s ease,box-shadow .35s ease;}
+  .film:hover .film-video{transform:translateY(-6px);box-shadow:0 22px 46px var(--shadow);}
+  .film-video video{width:100%;height:100%;object-fit:cover;display:block;}
+  /* 封面圖：預設黑白，hover 變彩色；墊在 video 之上，影片載入後才隱藏 */
+  .cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;filter:grayscale(1) contrast(.95) brightness(1.02);transition:filter .5s ease,transform .5s ease;}
+  .film:hover .cover{filter:grayscale(0);transform:scale(1.04);}
+  .play-hover{position:absolute;inset:0;background:rgba(20,18,12,.3);opacity:0;display:flex;align-items:center;justify-content:center;transition:opacity .3s ease;z-index:4;pointer-events:none;}
+  .film:hover .play-hover{opacity:1;}
+  .play-hover .circle{width:58px;height:58px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;}
+  .play-hover .tri{width:0;height:0;border-left:16px solid #fff;border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:4px;}
+  .film-body{padding:16px 2px 0;}
+  .film-body h3{font-family:"Noto Serif TC",serif;font-weight:600;font-size:18px;color:var(--ink);margin-bottom:6px;}
+  .film-body p{font-size:13.5px;color:var(--ink-soft);line-height:1.7;margin-bottom:13px;}
+  .shop-link{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-soft);background:var(--bg-soft);border:1px solid var(--line);border-radius:999px;padding:5px 13px;text-decoration:none;transition:all .25s ease;}
+  .shop-link:hover{border-color:var(--accent);color:var(--ink);}
+  .shop-link .arr{font-size:13px;transition:transform .25s ease;}
+  .shop-link:hover .arr{transform:translateX(2px);}
+
+  /* 引言 */
+  .quote{border-top:1px solid var(--line);text-align:center;}
+  .quote .leaf{font-size:30px;margin-bottom:18px;}
+  .quote blockquote{font-family:"Noto Serif TC",serif;font-weight:500;font-size:clamp(22px,3.4vw,34px);line-height:1.5;color:var(--ink);max-width:760px;margin:0 auto;}
+  .quote .by{margin-top:20px;font-family:"Space Grotesk",sans-serif;font-size:12px;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;}
+
+  /* footer */
+  footer{border-top:1px solid var(--line);background:var(--bg-soft);transition:background .5s ease;}
+  .foot-inner{max-width:1320px;margin:0 auto;padding:7vh clamp(20px,5vw,72px);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;}
+  .foot-inner .ftitle{font-family:"Noto Serif TC",serif;font-weight:600;font-size:18px;color:var(--ink);margin-bottom:6px;}
+  .foot-inner .fsub{font-size:13px;color:var(--ink-soft);font-family:"Space Grotesk",sans-serif;letter-spacing:.03em;}
+
+  @media(max-width:860px){
+    .nav-links{display:none;} .menu-btn{display:block;}
+    .story-grid{grid-template-columns:1fr;gap:0;}
+    .beat{padding-bottom:34px;}.beat:nth-child(3)::after{display:block;}.beat:last-child{padding-bottom:0;}
+    .sec-head .rule{display:none;}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+</style>
+</head>
+<body data-theme="light">
+
+<!-- 導覽列 -->
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand">盤點一下我的工作區</div>
+    <nav class="nav-links">
+      <a href="#top" class="active">首頁</a>
+      <a href="#inspo">靈感</a>
+      <a href="#films">影片</a>
+      <a href="#about">關於</a>
+      <button class="nav-toggle" id="toggle"><span id="ticon">◑</span><span id="tlabel">深色</span></button>
+    </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="選單">≡</button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-inner">
+    <div class="eyebrow">A Workspace Inventory · 五支短影音</div>
+    <h1>盤點一下<br>我的<em>工作區</em></h1>
+    <p>趁著想重新調整書桌配置，把那些用了至少半年的工作區用品，一個一個重新看過一輪。五件東西，五支短影音。</p>
+    <div class="hero-actions">
+      <a href="#inspo" class="btn btn-primary">靈感從哪來</a>
+      <a href="#films" class="btn btn-ghost">直接看影片</a>
+    </div>
+  </div>
+</section>
+
+<!-- 靈感歷程（移到影片上方） -->
+<section class="sec frame" id="inspo">
+  <div class="sec-head">
+    <div>
+      <div class="sec-label">Behind the idea</div>
+      <h2>這支系列是怎麼長出來的</h2>
+    </div>
+    <div class="rule"></div>
+  </div>
+
+  <div class="story-grid">
+    <div class="beat">
+      <h3>最初：整理房間的好物分享</h3>
+      <p>期中提案時想做的是「整理房間的過程中，我留下的 5 個好用物」——把產品推薦藏進真實的生活情境，不是硬邦邦的開箱，而是生活軌跡的分享。</p>
+    </div>
+    <div class="beat">
+      <h3>轉個彎：來不及大翻新</h3>
+      <p>實際動工才發現，要拍出整理「前後」的明顯對比，時間根本不夠。與其硬湊一個假裝煥然一新的房間，不如誠實一點：focus 在那些我本來就一直在用、也決定留下的東西。</p>
+    </div>
+    <div class="beat">
+      <h3>加進來：注音當切入點</h3>
+      <p>剛好最近 Threads 上流行用注音 <span class="bopo">ㄅㄆㄇ</span> 當分數評東西，覺得可愛又很台，就接了進來——給每樣東西一個輕鬆的小評級，當作重新檢視的角度，而不是認真的評測。</p>
+    </div>
+    <div class="beat">
+      <h3>定下來：生活感 ＋ 輕質感</h3>
+      <p>畫面延續提案方向：盡量不露臉、讓焦點回到物品本身，乾淨自然光、日系雜誌的氛圍，每支控制在一分鐘內。風格有一半其實是靠剪輯的節奏在說話。</p>
+    </div>
+  </div>
+
+  <div class="scale">
+    <div class="lab">影片裡偶爾出現的注音小評級，是這樣分的：</div>
+    <div class="lvl"><b><b>ㄅ</b> 好用而且推薦</b></div>
+    <div class="lvl"><b><b>ㄆ</b> 好用，但有點小缺點</b></div>
+    <div class="lvl"><b><b>ㄇ</b> 普通，可有可無</b></div>
+    <div class="lvl"><b><b>ㄈ</b> 有點後悔</b></div>
+    <div class="lvl"><b><b>ㄦ</b> 想淘汰</b></div>
+  </div>
+</section>
+
+<!-- 影片 -->
+<section class="sec frame" id="films">
+  <div class="sec-head">
+    <div>
+      <div class="sec-label">The five</div>
+      <h2>留在工作區的這五個</h2>
+      <p>點卡片播放，每支專注講一樣東西。</p>
+    </div>
+    <div class="rule"></div>
+  </div>
+
+  <div class="reel">
+
+    <article class="film">
+      <div class="film-video">
+        <div class="play-hover"><div class="circle"><div class="tri"></div></div></div>
+        <video controls controlsList="nodownload" preload="none" playsinline>
+          <source src="videos/01-side-table.mp4" type="video/mp4">
+        </video>
+        <img class="cover" alt="IKEA 升降邊桌"
+          src="videos/01-side-table-cover.png">
+      </div>
+      <div class="film-body">
+        <h3>IKEA 升降邊桌</h3>
+        <p>純白好調又能移動，本來想替主桌多擠空間。洞洞板夾上後反而被吃掉一塊——問題不在桌子，在配置。</p>
+        <a class="shop-link" href="https://www.ikea.com.tw/zh/products/home-workspace/home-desks/bollsidan-art-60557802" target="_blank" rel="noopener">看這個 <span class="arr">→</span></a>
+      </div>
+    </article>
+
+    <article class="film">
+      <div class="film-video">
+        <div class="play-hover"><div class="circle"><div class="tri"></div></div></div>
+        <video controls controlsList="nodownload" preload="none" playsinline>
+          <source src="videos/02-monitor-arm.mp4" type="video/mp4">
+        </video>
+        <img class="cover" alt="COFO 螢幕懸臂"
+          src="videos/02-monitor-arm-cover.png">
+      </div>
+      <div class="film-body">
+        <h3>COFO 螢幕懸臂</h3>
+        <p>坐站切換的高度困擾消失，桌面也清爽。只是雙臂版的筆電座彈簧很卡，放拿 MacBook 有點掙扎。</p>
+        <a class="shop-link" href="https://www.cofo.com.tw/products/monitor_arm_pro_buy" target="_blank" rel="noopener">看這個 <span class="arr">→</span></a>
+      </div>
+    </article>
+
+    <article class="film">
+      <div class="film-video">
+        <div class="play-hover"><div class="circle"><div class="tri"></div></div></div>
+        <video controls controlsList="nodownload" preload="none" playsinline>
+          <source src="videos/03-pegboard.mp4" type="video/mp4">
+        </video>
+        <img class="cover" alt="洞洞板"
+          src="videos/03-pegboard-cover.png">
+      </div>
+      <div class="film-body">
+        <h3>洞洞板</h3>
+        <p>不能釘牆的人的收納救星，小物往上一掛桌面立刻乾淨。只是買得太早尺寸太大，現在跟懸臂、邊桌搶位置。</p>
+        <a class="shop-link" href="https://www.ikea.com.tw/zh/products/wall-organisers/boards-and-wall-organisers/skadis-spr-69515978" target="_blank" rel="noopener">看這個 <span class="arr">→</span></a>
+      </div>
+    </article>
+
+    <article class="film">
+      <div class="film-video">
+        <div class="play-hover"><div class="circle"><div class="tri"></div></div></div>
+        <video controls controlsList="nodownload" preload="none" playsinline>
+          <source src="videos/04-wipes-box.mp4" type="video/mp4">
+        </video>
+        <img class="cover" alt="濕紙巾盒"
+          src="videos/04-wipes-box-cover.png">
+      </div>
+      <div class="film-body">
+        <h3>濕紙巾盒</h3>
+        <p>白色霧面，為桌面顏值而買。挑翻蓋本想防貓抽紙，結果家裡的貓力氣太大，不只抽得出來還能解體它。</p>
+        <a class="shop-link" href="https://shopee.tw/product/75521922/1962634619" target="_blank" rel="noopener">看這個 <span class="arr">→</span></a>
+      </div>
+    </article>
+
+    <article class="film">
+      <div class="film-video">
+        <div class="play-hover"><div class="circle"><div class="tri"></div></div></div>
+        <video controls controlsList="nodownload" preload="none" playsinline>
+          <source src="videos/05-mounting-putty.mp4" type="video/mp4">
+        </video>
+        <img class="cover" alt="固定黏土"
+          src="videos/05-mounting-putty-cover.png">
+      </div>
+      <div class="film-body">
+        <h3>固定黏土</h3>
+        <p>別看它小小一塊，海報、公仔、插座都靠它固定，黏快一年沒掉、撕下不留痕。最不起眼的隱藏 MVP。</p>
+        <a class="shop-link" href="https://shopee.tw/product/165635379/23434510525" target="_blank" rel="noopener">看這個 <span class="arr">→</span></a>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- 引言 -->
+<section class="sec frame quote" id="about">
+  <div class="leaf">🌱</div>
+  <blockquote>盤點不是為了丟掉，而是重新看清楚，哪些東西真的還適合現在的桌子。</blockquote>
+  <div class="by">— 製作筆記</div>
+</section>
+
+<!-- footer -->
+<footer>
+  <div class="foot-inner">
+    <div>
+      <div class="ftitle">盤點一下我的工作區</div>
+      <div class="fsub">期末短影音作品 · 楊孟璇 311359026</div>
+    </div>
+    <div class="fsub">五支短影音 · 工作區選物</div>
+  </div>
+</footer>
+
+<script>
+  const root=document.body,btn=document.getElementById('toggle'),
+        ic=document.getElementById('ticon'),lb=document.getElementById('tlabel');
+  function setTheme(t){root.setAttribute('data-theme',t);lb.textContent=t==='light'?'深色':'淺色';ic.textContent=t==='light'?'◑':'◐';}
+  btn.addEventListener('click',()=>setTheme(root.getAttribute('data-theme')==='light'?'dark':'light'));
+
+  // 封面永遠蓋在影片上；點封面才播放並隱藏封面（避免 preload 觸發 loadeddata 把封面提早藏掉）
+  document.querySelectorAll('.film-video').forEach(box=>{
+    const v=box.querySelector('video');
+    const c=box.querySelector('.cover');
+    const ph=box.querySelector('.play-hover');
+    if(!v||!c) return;
+    function reveal(){
+      c.style.display='none';
+      if(ph) ph.style.display='none';
+      v.play().catch(()=>{});
+    }
+    c.style.cursor='pointer';
+    c.addEventListener('click',reveal);
+    if(ph){ph.style.pointerEvents='none';}
+
+    // 防下載保護：防止在影片元件與卡片上使用滑鼠右鍵選單另存影片
+    box.addEventListener('contextmenu', e => {
+      e.preventDefault();
+    });
+  });
+
+  const secs=[...document.querySelectorAll('section[id]')];
+  const links=[...document.querySelectorAll('.nav-links a')];
+  window.addEventListener('scroll',()=>{
+    let cur='top';
+    secs.forEach(s=>{if(window.scrollY>=s.offsetTop-120)cur=s.id;});
+    links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
+  });
+</script>
+</body>
+</html>
